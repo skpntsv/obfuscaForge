@@ -1,38 +1,28 @@
 package ru.nsu.skopintsev
 
-import java.io.File
+import java.util.*
 
 fun main() {
-    val directory = File("./src/test/kotlin")
-    val files = directory.walkTopDown().filter { it.isFile && it.extension == "java" }
+    println("Выберите действие: ")
+    println("1. Обфусцировать")
+    println("2. Деобфусцировать")
 
-    files.forEach { file ->
-        println("Обфускация файла: ${file.nameWithoutExtension}: ${file.absolutePath}")
-        val originalContent = file.readText()
-        val obfuscatedContent = obfuscateJavaCode(originalContent)
-        file.writeText(obfuscatedContent)
-        println("Обфускация файла ${file.name} прошла успешно")
+    val input = Scanner(System.`in`)
+    when (input.nextInt()) {
+        1 -> {
+            println("Введите путь к директории с Java проектом:")
+            val directoryPath = readln()
+            obfuscate(directoryPath)
+        }
+
+        2 -> {
+            println("Введите путь к директории с Java проектом:")
+            val directoryPath = readln()
+
+            println("Введите путь к JSON файлу с правилами обфускации:")
+            val jsonFilePath = readln()
+            deobfuscate(directoryPath, jsonFilePath)
+        }
+        else -> println("Неверный выбор действия.")
     }
-}
-
-fun obfuscateJavaCode(code: String): String {
-    val stringLiteralRegex = "\"(?:\\\\.|[^\\\\\"])*\"".toRegex()
-
-    var obfuscatedCode = code
-    stringLiteralRegex.findAll(code).forEach { matchResult ->
-        val originalString = matchResult.value
-        val encodedString = obfuscateString(originalString)
-        obfuscatedCode = obfuscatedCode.replace(originalString, encodedString)
-        println("\t$originalString -> $encodedString")
-    }
-
-    return obfuscatedCode
-}
-
-fun obfuscateString(input: String): String {
-    val builder = StringBuilder()
-    for (char in input) {
-        builder.append("\\u").append(String.format("%04x", char.code))
-    }
-    return builder.toString()
 }

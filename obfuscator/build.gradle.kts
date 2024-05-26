@@ -1,5 +1,6 @@
 plugins {
     kotlin("jvm") version "1.9.23"
+    application
 }
 
 group = "ru.nsu.skopintsev"
@@ -10,7 +11,13 @@ repositories {
 }
 
 dependencies {
+    implementation(kotlin("stdlib"))
+    implementation("com.google.code.gson:gson:2.8.8")
     testImplementation(kotlin("test"))
+}
+
+application {
+    mainClass.set("ru.nsu.skopintsev.MainKt")
 }
 
 tasks.test {
