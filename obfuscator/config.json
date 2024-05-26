@@ -1,0 +1,12 @@
+{
+  "action": "obfuscate",
+  "projectPath": "./src/test",
+
+  "obfuscate": {
+    "encodeStrings": true,
+    "obfuscateVariables": true
+  },
+  "deobfuscate": {
+    "jsonFilePath": "./src/test/kotlin/rules.json"
+  }
+}

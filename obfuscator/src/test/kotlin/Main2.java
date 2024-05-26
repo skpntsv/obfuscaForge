@@ -1,9 +1,9 @@
 public class Main2 {
     public static void main(String[] args) {
-        String a = "Твой обфускатор не пройдёт!";
+        String BGUUtKJa = "Твой обфускатор не пройдёт!";
         
-        String b = "Твой обфускатор не пройдёт!";
+        String HA3v0A2n = "Твой обфускатор не пройдёт!";
 
-        System.err.println(a.equals(b));
+        System.err.println(BGUUtKJa.equals(HA3v0A2n));
     }
 }

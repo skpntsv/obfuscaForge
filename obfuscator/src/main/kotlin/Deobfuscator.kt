@@ -24,7 +24,7 @@ fun deobfuscate(directoryPath: String, jsonFilePath: String) {
 
     val files = directory.walkTopDown().filter { it.isFile && it.extension == "java" }
 
-    println("Деобфускация проекта[${directoryPath}...")
+    println("Деобфускация проекта[${directory.name}]...")
     files.forEach { file ->
         println("Деобфускация файла: ${file.nameWithoutExtension}: ${file.absolutePath}")
         val obfuscatedContent = file.readText()
@@ -32,7 +32,7 @@ fun deobfuscate(directoryPath: String, jsonFilePath: String) {
         file.writeText(deobfuscatedContent)
         println("Деобфускация файла ${file.name} прошла успешно")
     }
-    println("Деобфускация проекта[${directoryPath} завершена!")
+    println("Деобфускация проекта[${directory.name}] завершена!")
 }
 
 fun deobfuscateJavaCode(code: String, rules: List<ObfuscationRule>): String {

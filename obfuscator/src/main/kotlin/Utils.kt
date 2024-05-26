@@ -14,3 +14,19 @@ fun String.isNotKeyword(): Boolean {
     )
     return !keywords.contains(this)
 }
+
+data class Config(
+    val action: String,
+    val projectPath: String,
+    val obfuscate: ObfuscateConfig,
+    val deobfuscate: DeobfuscateConfig
+)
+
+data class ObfuscateConfig(
+    val encodeStrings: Boolean,
+    val obfuscateVariables: Boolean
+)
+
+data class DeobfuscateConfig(
+    val jsonFilePath: String
+)

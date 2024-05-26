@@ -2,9 +2,9 @@ public class Main {
     public static void main(String[] args) {
         System.out.println("Hello world!");
 
-        int a = 1;
-        int b = 5;
+        int MVTRnLe0 = 1;
+        int Eabk6CVK = 5;
 
-        System.err.println(a + b);
+        System.err.println(MVTRnLe0 + Eabk6CVK);
     }
 }

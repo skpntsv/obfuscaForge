@@ -5,7 +5,7 @@ import java.nio.file.Files
 import com.google.gson.Gson
 import java.security.SecureRandom
 
-fun obfuscate(directoryPath: String) {
+fun obfuscate(directoryPath: String, config: ObfuscateConfig) {
     val directory = File(directoryPath)
     if (!directory.exists() || !directory.isDirectory) {
         println("Указанная директория не существует или не является директорией.")
@@ -20,7 +20,7 @@ fun obfuscate(directoryPath: String) {
         println("Обфускация файла: ${file.nameWithoutExtension}: ${file.absolutePath}")
         val originalContent = file.readText()
         val rules = mutableListOf<ObfuscationRule>()
-        val obfuscatedContent = obfuscateJavaCode(originalContent, rules)
+        val obfuscatedContent = obfuscateJavaCode(originalContent, rules, config)
         allRules.addAll(rules)
         file.writeText(obfuscatedContent)
         println("Обфускация файла ${file.name} прошла успешно")
@@ -32,33 +32,34 @@ fun obfuscate(directoryPath: String) {
     println("Правила обфускации сохранены в ${rulesFile.absolutePath}")
 }
 
-fun obfuscateJavaCode(code: String, rules: MutableList<ObfuscationRule>): String {
-    val stringLiteralRegex = "\"(?:\\\\.|[^\\\\\"])*\"".toRegex()
-    val variableDeclarationRegex = "\\b(int|float|double|char|String|boolean|byte|short|long)\\b\\s+([a-zA-Z_][a-zA-Z0-9_]*)".toRegex()
-
+fun obfuscateJavaCode(code: String, rules: MutableList<ObfuscationRule>, config: ObfuscateConfig): String {
     var obfuscatedCode = code
 
-    // Обфускация строковых литералов
-    stringLiteralRegex.findAll(code).forEach { matchResult ->
-        val originalString = matchResult.value
-        val encodedString = obfuscateString(originalString)
-        obfuscatedCode = obfuscatedCode.replace(originalString, encodedString)
-        rules.add(ObfuscationRule(originalString, encodedString))
-        println("\t$originalString -> $encodedString")
+    if (config.encodeStrings) {
+        val stringLiteralRegex = "\"(?:\\\\.|[^\\\\\"])*\"".toRegex()
+        stringLiteralRegex.findAll(code).forEach { matchResult ->
+            val originalString = matchResult.value
+            val encodedString = obfuscateString(originalString)
+            obfuscatedCode = obfuscatedCode.replace(originalString, encodedString)
+            rules.add(ObfuscationRule(originalString, encodedString))
+            println("\t$originalString -> $encodedString")
+        }
     }
 
-    // Обфускация переменных
-    variableDeclarationRegex.findAll(code).forEach { matchResult ->
-        val originalVariable = matchResult.groupValues[2]
-        if (rules.none { it.original == originalVariable }) {
-            val obfuscatedVariable = generateRandomVariableName(8)
-            rules.add(ObfuscationRule(originalVariable, obfuscatedVariable))
-            obfuscatedCode = obfuscatedCode.replace("\\b$originalVariable\\b".toRegex(), obfuscatedVariable)
-            println("\t$originalVariable -> $obfuscatedVariable")
-        } else {
-            val rule = rules.find { it.original == originalVariable }
-            if (rule != null) {
-                obfuscatedCode = obfuscatedCode.replace("\\b$originalVariable\\b".toRegex(), rule.obfuscated)
+    if (config.obfuscateVariables) {
+        val variableDeclarationRegex = "\\b(int|float|double|char|String|boolean|byte|short|long)\\b\\s+([a-zA-Z_][a-zA-Z0-9_]*)".toRegex()
+        variableDeclarationRegex.findAll(code).forEach { matchResult ->
+            val originalVariable = matchResult.groupValues[2]
+            if (rules.none { it.original == originalVariable }) {
+                val obfuscatedVariable = generateRandomVariableName(8)
+                rules.add(ObfuscationRule(originalVariable, obfuscatedVariable))
+                obfuscatedCode = obfuscatedCode.replace("\\b$originalVariable\\b".toRegex(), obfuscatedVariable)
+                println("\t$originalVariable -> $obfuscatedVariable")
+            } else {
+                val rule = rules.find { it.original == originalVariable }
+                if (rule != null) {
+                    obfuscatedCode = obfuscatedCode.replace("\\b$originalVariable\\b".toRegex(), rule.obfuscated)
+                }
             }
         }
     }
